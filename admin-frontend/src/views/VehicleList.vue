@@ -47,9 +47,9 @@ const dialogVisible = ref(false)
 const form = reactive({ id:null, plateNo:'', model:'', status:'', driverId:'' })
 
 const load = async ()=>{
- const res = await api.get('/vehicles', { params:{ page:page.value-1, size:size.value, plateNo: query.plateNo } })
- list.value = res.content
- total.value = res.totalElements
+ const res = await api.get('/vehicles', { params:{ page:page.value, size:size.value, plateNo: query.plateNo } })
+ list.value = res.records
+ total.value = res.total
 }
 
 const openDialog = (row)=>{

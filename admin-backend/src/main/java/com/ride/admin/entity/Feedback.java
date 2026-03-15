@@ -1,20 +1,20 @@
 package com.ride.admin.entity;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import java.time.LocalDateTime;
 
-@Entity
 @Data
+@TableName(" feedback\)
 public class Feedback {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @TableId(type = IdType.AUTO)
  private Long id;
- private String userType; // passenger/driver
+ private String userType;
  private Long userId;
- private String type; // suggestion/complaint/praise
+ private String type;
  private String content;
- private String status; // pending/processed
+ private String status;
  private LocalDateTime createTime;
 }
-

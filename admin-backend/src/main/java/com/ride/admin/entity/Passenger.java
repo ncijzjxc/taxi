@@ -1,18 +1,18 @@
 package com.ride.admin.entity;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import java.time.LocalDateTime;
 
-@Entity
 @Data
+@TableName( passenger)
 public class Passenger {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @TableId(type = IdType.AUTO)
  private Long id;
  private String name;
  private String phone;
  private LocalDateTime registerTime;
- private String status; // normal/frozen
+ private String status;
 }
-

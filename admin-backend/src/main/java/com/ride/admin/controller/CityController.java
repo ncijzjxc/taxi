@@ -1,43 +1,46 @@
 package com.ride.admin.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ride.admin.common.ApiResponse;
 import com.ride.admin.entity.City;
-import com.ride.admin.repo.CityRepo;
-import org.springframework.data.domain.*;
+import com.ride.admin.service.CityService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cities")
 public class CityController {
- private final CityRepo repo;
- public CityController(CityRepo repo){ this.repo = repo; }
+ private final CityService service;
+ public CityController(CityService service){ this.service = service; }
 
  @GetMapping
- public ApiResponse<Page<City>> list(@RequestParam(defaultValue = "0") int page,
+ public ApiResponse<Page<City>> list(@RequestParam(defaultValue = "1") int page,
  @RequestParam(defaultValue = "10") int size,
  @RequestParam(required = false) String name){
- PageRequest pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+ Page<City> p = new Page<>(page, size);
  if (name!=null && !name.isEmpty()){
- return ApiResponse.ok(repo.findByNameContaining(name, pr));
+ return ApiResponse.ok(service.lambdaQuery().like(City::getName, name).page(p));
  }
- return ApiResponse.ok(repo.findAll(pr));
+ return ApiResponse.ok(service.page(p));
  }
 
  @PostMapping
  public ApiResponse<City> create(@RequestBody City c){
- return ApiResponse.ok(repo.save(c));
+ service.save(c);
+ return ApiResponse.ok(c);
  }
 
  @PutMapping("/{id}")
  public ApiResponse<City> update(@PathVariable Long id, @RequestBody City c){
  c.setId(id);
- return ApiResponse.ok(repo.save(c));
+ service.updateById(c);
+ return ApiResponse.ok(c);
  }
 
  @DeleteMapping("/{id}")
  public ApiResponse<Void> delete(@PathVariable Long id){
- repo.deleteById(id);
+ service.removeById(id);
  return ApiResponse.ok(null);
  }
 }
+
 

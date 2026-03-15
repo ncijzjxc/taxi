@@ -1,16 +1,16 @@
 package com.ride.admin.entity;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@Entity
 @Data
+@TableName(" admin\)
 public class Admin {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @TableId(type = IdType.AUTO)
  private Long id;
  private String username;
  private String password;
  private String role;
 }
-

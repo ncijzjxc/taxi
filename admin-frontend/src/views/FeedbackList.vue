@@ -54,9 +54,9 @@ const dialogVisible = ref(false)
 const form = reactive({ id:null, userType:'', userId:'', type:'', content:'', status:'' })
 
 const load = async ()=>{
- const res = await api.get('/feedback', { params:{ page:page.value-1, size:size.value, type: query.type } })
- list.value = res.content
- total.value = res.totalElements
+ const res = await api.get('/feedback', { params:{ page:page.value, size:size.value, type: query.type } })
+ list.value = res.records
+ total.value = res.total
 }
 
 const openDialog = (row)=>{

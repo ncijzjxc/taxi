@@ -1,16 +1,16 @@
 package com.ride.admin.entity;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@Entity
 @Data
+@TableName(" city\)
 public class City {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @TableId(type = IdType.AUTO)
  private Long id;
  private String name;
- private String openStatus; // open/close
- private String operateStatus; // running/paused
+ private String openStatus;
+ private String operateStatus;
 }
-

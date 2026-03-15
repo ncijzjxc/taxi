@@ -1,17 +1,17 @@
 package com.ride.admin.entity;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@Entity
 @Data
+@TableName(" vehicle\)
 public class Vehicle {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @TableId(type = IdType.AUTO)
  private Long id;
  private String plateNo;
  private String model;
- private String status; // normal/maintenance
- private Long driverId; //1-1 bind
+ private String status;
+ private Long driverId;
 }
-

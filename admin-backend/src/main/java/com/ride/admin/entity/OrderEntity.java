@@ -1,24 +1,23 @@
 package com.ride.admin.entity;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "orders")
 @Data
+@TableName(" orders\)
 public class OrderEntity {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @TableId(type = IdType.AUTO)
  private Long id;
  private Long passengerId;
  private Long driverId;
  private Long vehicleId;
  private String startAddr;
  private String endAddr;
- private String orderStatus; // ongoing/completed/canceled
+ private String orderStatus;
  private BigDecimal amount;
  private LocalDateTime createTime;
 }
-

@@ -1,18 +1,18 @@
 package com.ride.admin.entity;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
-@Entity
 @Data
+@TableName( driver)
 public class Driver {
- @Id
- @GeneratedValue(strategy = GenerationType.IDENTITY)
+ @TableId(type = IdType.AUTO)
  private Long id;
  private String name;
  private String phone;
  private String licenseNo;
- private String auditStatus; // pending/approved/rejected
- private String onlineStatus; // online/offline
+ private String auditStatus;
+ private String onlineStatus;
 }
-

@@ -1,43 +1,46 @@
 package com.ride.admin.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ride.admin.common.ApiResponse;
 import com.ride.admin.entity.Feedback;
-import com.ride.admin.repo.FeedbackRepo;
-import org.springframework.data.domain.*;
+import com.ride.admin.service.FeedbackService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/feedback")
 public class FeedbackController {
- private final FeedbackRepo repo;
- public FeedbackController(FeedbackRepo repo){ this.repo = repo; }
+ private final FeedbackService service;
+ public FeedbackController(FeedbackService service){ this.service = service; }
 
  @GetMapping
- public ApiResponse<Page<Feedback>> list(@RequestParam(defaultValue = "0") int page,
+ public ApiResponse<Page<Feedback>> list(@RequestParam(defaultValue = "1") int page,
  @RequestParam(defaultValue = "10") int size,
  @RequestParam(required = false) String type){
- PageRequest pr = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+ Page<Feedback> p = new Page<>(page, size);
  if (type!=null && !type.isEmpty()){
- return ApiResponse.ok(repo.findByType(type, pr));
+ return ApiResponse.ok(service.lambdaQuery().eq(Feedback::getType, type).page(p));
  }
- return ApiResponse.ok(repo.findAll(pr));
+ return ApiResponse.ok(service.page(p));
  }
 
  @PostMapping
  public ApiResponse<Feedback> create(@RequestBody Feedback f){
- return ApiResponse.ok(repo.save(f));
+ service.save(f);
+ return ApiResponse.ok(f);
  }
 
  @PutMapping("/{id}")
  public ApiResponse<Feedback> update(@PathVariable Long id, @RequestBody Feedback f){
  f.setId(id);
- return ApiResponse.ok(repo.save(f));
+ service.updateById(f);
+ return ApiResponse.ok(f);
  }
 
  @DeleteMapping("/{id}")
  public ApiResponse<Void> delete(@PathVariable Long id){
- repo.deleteById(id);
+ service.removeById(id);
  return ApiResponse.ok(null);
  }
 }
+
 
