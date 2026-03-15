@@ -148,5 +148,7 @@ ALTER TABLE price_rule
 ADD COLUMN status VARCHAR(20) DEFAULT 'enabled',
 ADD COLUMN effective_time DATETIME;
 
--- 设置已有数据为启用并设定生效时间
+
 UPDATE price_rule SET status='enabled', effective_time=NOW();
+ALTER TABLE price_rule
+ADD CONSTRAINT fk_price_rule_city FOREIGN KEY (city_id) REFERENCES city(id);

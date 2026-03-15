@@ -25,6 +25,7 @@ public class PriceRuleController {
 
  @PostMapping
  public ApiResponse<PriceRule> create(@RequestBody PriceRule r){
+ if (r.getCityId()==null) throw new RuntimeException("cityId required");
  service.save(r);
  return ApiResponse.ok(r);
  }
