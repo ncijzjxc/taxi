@@ -17,7 +17,10 @@ public class JwtFilter extends OncePerRequestFilter {
  String header = request.getHeader("Authorization");
  if (header != null && header.startsWith("Bearer ")) {
  try {
- JwtUtil.parse(header.substring(7));
+ String username = JwtUtil.parse(header.substring(7));
+ org.springframework.security.authentication.UsernamePasswordAuthenticationToken auth =
+ new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(username, null, java.util.Collections.emptyList());
+ org.springframework.security.core.context.SecurityContextHolder.getContext().setAuthentication(auth);
  chain.doFilter(request, response);
  return;
  } catch (Exception ignored) {}
