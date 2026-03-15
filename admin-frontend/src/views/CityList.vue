@@ -10,9 +10,10 @@
  <el-table-column prop="name" label="城市"/>
  <el-table-column prop="openStatus" label="是否开通"/>
  <el-table-column prop="operateStatus" label="运营状态"/>
- <el-table-column label="操作" width="160">
+ <el-table-column label="操作" width="240">
  <template #default="scope">
  <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
+ <el-button size="small" @click="openPrice(scope.row)">计价管理</el-button>
  <el-button size="small" type="danger" @click="remove(scope.row.id)">删除</el-button>
  </template>
  </el-table-column>
@@ -30,6 +31,56 @@
  <el-button type="primary" @click="save">保存</el-button>
  </template>
  </el-dialog>
+
+ <!--计价管理 -->
+ <el-dialog v-model="priceDialog" title="计价管理" width="900px">
+ <div class="toolbar">
+ <el-select v-model="priceQuery.carType" placeholder="车型" style="width:160px">
+ <el-option label="全部" value="" />
+ <el-option label="经济" value="economy" />
+ <el-option label="高端" value="premium" />
+ <el-option label="豪车" value="luxury" />
+ </el-select>
+ <el-button type="primary" @click="loadPrice">查询</el-button>
+ <el-button type="success" @click="openPriceDialog()">新增</el-button>
+ </div>
+ <el-table :data="priceList" style="width:100%">
+ <el-table-column prop="carType" label="车型"/>
+ <el-table-column prop="startPrice" label="起步价"/>
+ <el-table-column prop="startKm" label="起步公里"/>
+ <el-table-column prop="pricePerKm" label="每公里"/>
+ <el-table-column prop="pricePerMin" label="每分钟"/>
+ <el-table-column prop="version" label="版本"/>
+ <el-table-column label="操作" width="160">
+ <template #default="scope">
+ <el-button size="small" @click="openPriceDialog(scope.row)">编辑</el-button>
+ <el-button size="small" type="danger" @click="removePrice(scope.row.id)">删除</el-button>
+ </template>
+ </el-table-column>
+ </el-table>
+ <el-pagination v-model:current-page="pricePage" :page-size="priceSize" :total="priceTotal" @current-change="loadPrice" />
+ </el-dialog>
+
+ <el-dialog v-model="priceFormVisible" title="计价规则">
+ <el-form :model="priceForm">
+ <el-form-item label="车型">
+ <el-select v-model="priceForm.carType" placeholder="车型">
+ <el-option label="经济" value="economy" />
+ <el-option label="高端" value="premium" />
+ <el-option label="豪车" value="luxury" />
+ </el-select>
+ </el-form-item>
+ <el-form-item label="起步价"><el-input v-model="priceForm.startPrice"/></el-form-item>
+ <el-form-item label="起步公里"><el-input v-model="priceForm.startKm"/></el-form-item>
+ <el-form-item label="每公里"><el-input v-model="priceForm.pricePerKm"/></el-form-item>
+ <el-form-item label="每分钟"><el-input v-model="priceForm.pricePerMin"/></el-form-item>
+ <el-form-item label="版本"><el-input v-model="priceForm.version"/></el-form-item>
+ </el-form>
+ <template #footer>
+ <el-button @click="priceFormVisible=false">取消</el-button>
+ <el-button type="primary" @click="savePrice">保存</el-button>
+ </template>
+ </el-dialog>
  </el-card>
 </template>
 
@@ -43,6 +94,17 @@ const size = ref(10)
 const query = reactive({ name:'' })
 const dialogVisible = ref(false)
 const form = reactive({ id:null, name:'', openStatus:'', operateStatus:'' })
+
+// price rule
+const priceDialog = ref(false)
+const currentCity = ref(null)
+const priceList = ref([])
+const priceTotal = ref(0)
+const pricePage = ref(1)
+const priceSize = ref(10)
+const priceQuery = reactive({ carType:'' })
+const priceFormVisible = ref(false)
+const priceForm = reactive({ id:null, cityId:null, carType:'economy', startPrice:'', startKm:'', pricePerKm:'', pricePerMin:'', version:'v1' })
 
 const load = async ()=>{
  const res = await api.get('/cities', { params:{ page:page.value, size:size.value, name: query.name } })
@@ -62,6 +124,35 @@ const save = async ()=>{
 }
 
 const remove = async (id)=>{ await api.delete(`/cities/${id}`); load() }
+
+const openPrice = (row)=>{
+ currentCity.value = row
+ priceDialog.value = true
+ pricePage.value =1
+ loadPrice()
+}
+
+const loadPrice = async ()=>{
+ if (!currentCity.value) return
+ const res = await api.get('/price-rules', { params:{ cityId: currentCity.value.id, carType: priceQuery.carType, page: pricePage.value, size: priceSize.value } })
+ priceList.value = res.records
+ priceTotal.value = res.total
+}
+
+const openPriceDialog = (row)=>{
+ if (row){ Object.assign(priceForm,row) } else {
+ Object.assign(priceForm,{ id:null, cityId: currentCity.value.id, carType:'economy', startPrice:'', startKm:'', pricePerKm:'', pricePerMin:'', version:'v1' })
+ }
+ priceFormVisible.value=true
+}
+
+const savePrice = async ()=>{
+ if (priceForm.id){ await api.put(`/price-rules/${priceForm.id}`, priceForm) } else { await api.post('/price-rules', priceForm) }
+ priceFormVisible.value=false
+ loadPrice()
+}
+
+const removePrice = async (id)=>{ await api.delete(`/price-rules/${id}`); loadPrice() }
 
 onMounted(load)
 </script>
