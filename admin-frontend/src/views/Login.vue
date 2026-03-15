@@ -22,7 +22,7 @@ import api from '../api'
 const form = reactive({ username: 'admin', password: '123456' })
 const submit = async () => {
  const res = await api.post('/auth/login', form)
- localStorage.setItem('token', res.token)
+ localStorage.setItem('token', res.data.token)
  location.href = '/'
 }
 </script>
