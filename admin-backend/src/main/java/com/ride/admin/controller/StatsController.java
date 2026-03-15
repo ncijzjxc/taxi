@@ -39,9 +39,9 @@ public class StatsController {
 
  @GetMapping("/cities")
  public ApiResponse<List<Map<String,Object>>> cities(){
- var cities = cityRepo.findAll();
+ java.util.List<com.ride.admin.entity.City> cities = cityRepo.findAll();
  List<Map<String,Object>> list = new ArrayList<>();
- for (var c: cities){
+ for (com.ride.admin.entity.City c: cities){
  Map<String,Object> m = new HashMap<>();
  m.put("city", c.getName());
  m.put("totalOrders", orderRepo.count());

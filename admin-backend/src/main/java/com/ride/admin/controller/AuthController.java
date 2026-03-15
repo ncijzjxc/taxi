@@ -18,7 +18,7 @@ public class AuthController {
 
  @PostMapping("/login")
  public ApiResponse<Map<String,String>> login(@RequestBody LoginReq req){
- Admin admin = adminRepo.findByUsername(req.getUsername()).orElseThrow();
+ Admin admin = adminRepo.findByUsername(req.getUsername()).orElseThrow(() -> new RuntimeException("user not found"));
  if (!admin.getPassword().equals(req.getPassword())) throw new RuntimeException("password error");
  String token = JwtUtil.generateToken(admin.getUsername());
  Map<String,String> map = new HashMap<>();
