@@ -8,3 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PassengerRepo extends JpaRepository<Passenger, Long> {
  Page<Passenger> findByNameContaining(String name, Pageable pageable);
 }
+

@@ -1,6 +1,6 @@
 package com.ride.admin.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 
@@ -15,3 +15,4 @@ public class Passenger {
  private LocalDateTime registerTime;
  private String status; // normal/frozen
 }
+

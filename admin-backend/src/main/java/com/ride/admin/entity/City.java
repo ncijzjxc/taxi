@@ -1,6 +1,6 @@
 package com.ride.admin.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -13,3 +13,4 @@ public class City {
  private String openStatus; // open/close
  private String operateStatus; // running/paused
 }
+

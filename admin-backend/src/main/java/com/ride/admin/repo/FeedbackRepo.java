@@ -8,3 +8,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface FeedbackRepo extends JpaRepository<Feedback, Long> {
  Page<Feedback> findByType(String type, Pageable pageable);
 }
+

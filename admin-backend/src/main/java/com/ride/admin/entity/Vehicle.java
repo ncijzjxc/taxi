@@ -1,6 +1,6 @@
 package com.ride.admin.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -14,3 +14,4 @@ public class Vehicle {
  private String status; // normal/maintenance
  private Long driverId; //1-1 bind
 }
+

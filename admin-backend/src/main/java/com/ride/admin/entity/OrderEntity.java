@@ -1,6 +1,6 @@
 package com.ride.admin.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,3 +21,4 @@ public class OrderEntity {
  private BigDecimal amount;
  private LocalDateTime createTime;
 }
+

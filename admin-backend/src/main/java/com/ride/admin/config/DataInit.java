@@ -34,13 +34,14 @@ public class DataInit {
  vehicleRepo.save(v);
  OrderEntity o = new OrderEntity();
  o.setPassengerId(1L); o.setDriverId(d.getId()); o.setVehicleId(v.getId());
- o.setStartAddr("A地"); o.setEndAddr("B地"); o.setOrderStatus("completed"); o.setAmount(new BigDecimal("25.5")); o.setCreateTime(LocalDateTime.now());
+ o.setStartAddr("A�?); o.setEndAddr("B�?); o.setOrderStatus("completed"); o.setAmount(new BigDecimal("25.5")); o.setCreateTime(LocalDateTime.now());
  orderRepo.save(o);
  City c = new City(); c.setName("深圳"); c.setOpenStatus("open"); c.setOperateStatus("running");
  cityRepo.save(c);
- Feedback f = new Feedback(); f.setUserType("passenger"); f.setUserId(1L); f.setType("suggestion"); f.setContent("希望增加优惠券"); f.setStatus("pending"); f.setCreateTime(LocalDateTime.now());
+ Feedback f = new Feedback(); f.setUserType("passenger"); f.setUserId(1L); f.setType("suggestion"); f.setContent("希望增加优惠�?); f.setStatus("pending"); f.setCreateTime(LocalDateTime.now());
  feedbackRepo.save(f);
  }
  };
  }
 }
+

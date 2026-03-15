@@ -1,6 +1,6 @@
 package com.ride.admin.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -15,3 +15,4 @@ public class Driver {
  private String auditStatus; // pending/approved/rejected
  private String onlineStatus; // online/offline
 }
+
