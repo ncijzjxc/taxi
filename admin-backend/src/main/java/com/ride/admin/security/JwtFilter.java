@@ -13,6 +13,7 @@ public class JwtFilter extends OncePerRequestFilter {
  protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
  throws ServletException, IOException {
  String path = request.getRequestURI();
+ if ("OPTIONS".equalsIgnoreCase(request.getMethod())) { chain.doFilter(request, response); return; }
  if (path.contains("/auth/login")) { chain.doFilter(request, response); return; }
  String header = request.getHeader("Authorization");
  if (header != null && header.startsWith("Bearer ")) {
