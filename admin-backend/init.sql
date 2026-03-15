@@ -152,3 +152,7 @@ ADD COLUMN effective_time DATETIME;
 UPDATE price_rule SET status='enabled', effective_time=NOW();
 ALTER TABLE price_rule
 ADD CONSTRAINT fk_price_rule_city FOREIGN KEY (city_id) REFERENCES city(id);
+ALTER TABLE price_rule
+DROP FOREIGN KEY fk_price_rule_city;
+ALTER TABLE price_rule
+ADD CONSTRAINT fk_price_rule_city FOREIGN KEY (city_id) REFERENCES city(id) ON DELETE CASCADE;
