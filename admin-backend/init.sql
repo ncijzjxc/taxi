@@ -70,6 +70,19 @@ CREATE TABLE feedback (
  create_time DATETIME
 );
 
+/*è®¡ä»·è§„åˆ™ */
+CREATE TABLE price_rule (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ city_id BIGINT NOT NULL,
+ car_type VARCHAR(20) NOT NULL,
+ start_price DECIMAL(10,2),
+ start_km INT,
+ price_per_km DECIMAL(10,2),
+ price_per_min DECIMAL(10,2),
+ version VARCHAR(20),
+ create_time DATETIME
+);
+
 /* admin */
 INSERT INTO admin (username,password,role) VALUES
 ('admin','123456','SUPER'),
@@ -125,20 +138,8 @@ INSERT INTO feedback (user_type,user_id,type,content,status,create_time) VALUES
 ('driver',1,'praise','å¹³å°æ´¾å•æ•ˆç‡é«˜','processed',NOW()),
 ('driver',2,'suggestion','å¸Œæœ›å¢åŠ æ²¹è¡¥','pending',NOW()),
 ('passenger',3,'praise','æœåŠ¡å¾ˆå¥½','processed',NOW());
---¼Æ¼Û¹æÔò
-CREATE TABLE price_rule (
- id BIGINT PRIMARY KEY AUTO_INCREMENT,
- city_id BIGINT NOT NULL,
- car_type VARCHAR(20) NOT NULL,
- start_price DECIMAL(10,2),
- start_km INT,
- price_per_km DECIMAL(10,2),
- price_per_min DECIMAL(10,2),
- version VARCHAR(20),
- create_time DATETIME
-);
 
--- Ê¾ÀıÊı¾İ(ÉîÛÚ, ÈıÖÖ³µĞÍ)
+/* price rule */
 INSERT INTO price_rule (city_id, car_type, start_price, start_km, price_per_km, price_per_min, version, create_time) VALUES
 (1,'economy',10.00,3,2.00,0.50,'v1',NOW()),
 (1,'premium',15.00,3,3.00,0.80,'v1',NOW()),
