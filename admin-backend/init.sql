@@ -1,6 +1,7 @@
 DROP DATABASE IF EXISTS taxi;
 CREATE DATABASE taxi DEFAULT CHARSET utf8mb4;
 USE taxi;
+SET NAMES utf8mb4;
 
 /* 管理员 */
 CREATE TABLE admin (
