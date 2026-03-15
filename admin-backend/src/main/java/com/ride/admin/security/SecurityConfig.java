@@ -13,7 +13,8 @@ public class SecurityConfig {
  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
  http.csrf(csrf -> csrf.disable())
  .authorizeRequests(auth -> auth
- .antMatchers("/api/auth/login").permitAll()
+ .antMatchers("/api/auth/login", "/error").permitAll()
+ .antMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
  .anyRequest().authenticated()
  )
  .addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class)
