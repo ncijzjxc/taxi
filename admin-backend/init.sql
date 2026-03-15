@@ -144,3 +144,9 @@ INSERT INTO price_rule (city_id, car_type, start_price, start_km, price_per_km, 
 (1,'economy',10.00,3,2.00,0.50,'v1',NOW()),
 (1,'premium',15.00,3,3.00,0.80,'v1',NOW()),
 (1,'luxury',25.00,3,5.00,1.20,'v1',NOW());
+ALTER TABLE price_rule
+ADD COLUMN status VARCHAR(20) DEFAULT 'enabled',
+ADD COLUMN effective_time DATETIME;
+
+-- 设置已有数据为启用并设定生效时间
+UPDATE price_rule SET status='enabled', effective_time=NOW();

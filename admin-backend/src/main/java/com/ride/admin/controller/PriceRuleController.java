@@ -18,10 +18,9 @@ public class PriceRuleController {
  @RequestParam(defaultValue = "1") int page,
  @RequestParam(defaultValue = "10") int size){
  Page<PriceRule> p = new Page<>(page, size);
- if (carType!=null && !carType.isEmpty()){
- return ApiResponse.ok(service.lambdaQuery().eq(PriceRule::getCityId, cityId).eq(PriceRule::getCarType, carType).page(p));
- }
- return ApiResponse.ok(service.lambdaQuery().eq(PriceRule::getCityId, cityId).page(p));
+ var q = service.lambdaQuery().eq(PriceRule::getCityId, cityId);
+ if (carType!=null && !carType.isEmpty()) q.eq(PriceRule::getCarType, carType);
+ return ApiResponse.ok(q.orderByDesc(PriceRule::getEffectiveTime).page(p));
  }
 
  @PostMapping

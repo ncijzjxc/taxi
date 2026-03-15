@@ -51,7 +51,9 @@
  <el-table-column prop="pricePerKm" label="每公里"/>
  <el-table-column prop="pricePerMin" label="每分钟"/>
  <el-table-column prop="version" label="版本"/>
- <el-table-column label="操作" width="160">
+ <el-table-column prop="status" label="状态"/>
+ <el-table-column prop="effectiveTime" label="生效时间"/>
+ <el-table-column label="操作" width="200">
  <template #default="scope">
  <el-button size="small" @click="openPriceDialog(scope.row)">编辑</el-button>
  <el-button size="small" type="danger" @click="removePrice(scope.row.id)">删除</el-button>
@@ -75,6 +77,13 @@
  <el-form-item label="每公里"><el-input v-model="priceForm.pricePerKm"/></el-form-item>
  <el-form-item label="每分钟"><el-input v-model="priceForm.pricePerMin"/></el-form-item>
  <el-form-item label="版本"><el-input v-model="priceForm.version"/></el-form-item>
+ <el-form-item label="状态">
+ <el-select v-model="priceForm.status">
+ <el-option label="启用" value="enabled" />
+ <el-option label="停用" value="disabled" />
+ </el-select>
+ </el-form-item>
+ <el-form-item label="生效时间"><el-date-picker v-model="priceForm.effectiveTime" type="datetime" /></el-form-item>
  </el-form>
  <template #footer>
  <el-button @click="priceFormVisible=false">取消</el-button>
@@ -104,7 +113,7 @@ const pricePage = ref(1)
 const priceSize = ref(10)
 const priceQuery = reactive({ carType:'' })
 const priceFormVisible = ref(false)
-const priceForm = reactive({ id:null, cityId:null, carType:'economy', startPrice:'', startKm:'', pricePerKm:'', pricePerMin:'', version:'v1' })
+const priceForm = reactive({ id:null, cityId:null, carType:'economy', startPrice:'', startKm:'', pricePerKm:'', pricePerMin:'', version:'v1', status:'enabled', effectiveTime:'' })
 
 const load = async ()=>{
  const res = await api.get('/cities', { params:{ page:page.value, size:size.value, name: query.name } })
@@ -141,7 +150,7 @@ const loadPrice = async ()=>{
 
 const openPriceDialog = (row)=>{
  if (row){ Object.assign(priceForm,row) } else {
- Object.assign(priceForm,{ id:null, cityId: currentCity.value.id, carType:'economy', startPrice:'', startKm:'', pricePerKm:'', pricePerMin:'', version:'v1' })
+ Object.assign(priceForm,{ id:null, cityId: currentCity.value.id, carType:'economy', startPrice:'', startKm:'', pricePerKm:'', pricePerMin:'', version:'v1', status:'enabled', effectiveTime:'' })
  }
  priceFormVisible.value=true
 }

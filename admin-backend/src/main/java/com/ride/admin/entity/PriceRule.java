@@ -19,5 +19,7 @@ public class PriceRule {
  private BigDecimal pricePerKm;
  private BigDecimal pricePerMin;
  private String version;
+ private String status; // enabled/disabled
+ private LocalDateTime effectiveTime;
  private LocalDateTime createTime;
 }
