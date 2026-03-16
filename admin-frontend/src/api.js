@@ -11,7 +11,9 @@ api.interceptors.request.use(config => {
  return config
 })
 
-api.interceptors.response.use(res => res.data, err => {
+// 统一把后端 ApiResponse<T> 的 data 字段解包出来
+// 后端返回 { code, message, data }，这里直接返回 data，前端拿到的就是业务数据
+api.interceptors.response.use(res => res.data.data, err => {
  if (err.response && err.response.status ===401) {
  localStorage.removeItem('token')
  window.location.href = '/login'

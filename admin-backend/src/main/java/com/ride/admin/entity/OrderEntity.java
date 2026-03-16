@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@TableName(" orders\)
 public class OrderEntity {
  @TableId(type = IdType.AUTO)
  private Long id;

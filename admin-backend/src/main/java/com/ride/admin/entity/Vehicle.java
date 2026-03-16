@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName(" vehicle\)
 public class Vehicle {
  @TableId(type = IdType.AUTO)
  private Long id;

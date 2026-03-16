@@ -7,7 +7,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-@TableName(" feedback\)
 public class Feedback {
  @TableId(type = IdType.AUTO)
  private Long id;

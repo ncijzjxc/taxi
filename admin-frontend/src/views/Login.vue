@@ -22,7 +22,9 @@ import api from '../api'
 const form = reactive({ username: 'admin', password: '123456' })
 const submit = async () => {
  const res = await api.post('/auth/login', form)
- localStorage.setItem('token', res.data.token)
+ // 经过拦截器解包后，这里的 res 就是后端 ApiResponse 的 data 字段
+ // 后端登录返回的 data 里包含 token
+ localStorage.setItem('token', res.token)
  location.href = '/'
 }
 </script>

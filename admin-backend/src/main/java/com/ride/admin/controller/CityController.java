@@ -9,38 +9,41 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/cities")
 public class CityController {
- private final CityService service;
- public CityController(CityService service){ this.service = service; }
+    private final CityService service;
 
- @GetMapping
- public ApiResponse<Page<City>> list(@RequestParam(defaultValue = "1") int page,
- @RequestParam(defaultValue = "10") int size,
- @RequestParam(required = false) String name){
- Page<City> p = new Page<>(page, size);
- if (name!=null && !name.isEmpty()){
- return ApiResponse.ok(service.lambdaQuery().like(City::getName, name).page(p));
- }
- return ApiResponse.ok(service.page(p));
- }
+    public CityController(CityService service) {
+        this.service = service;
+    }
 
- @PostMapping
- public ApiResponse<City> create(@RequestBody City c){
- service.save(c);
- return ApiResponse.ok(c);
- }
+    @GetMapping
+    public ApiResponse<Page<City>> list(@RequestParam(defaultValue = "1") int page,
+                                        @RequestParam(defaultValue = "10") int size,
+                                        @RequestParam(required = false) String name) {
+        Page<City> p = new Page<>(page, size);
+        if (name != null && !name.isEmpty()) {
+            return ApiResponse.ok(service.lambdaQuery().like(City::getName, name).page(p));
+        }
+        return ApiResponse.ok(service.page(p));
+    }
 
- @PutMapping("/{id}")
- public ApiResponse<City> update(@PathVariable Long id, @RequestBody City c){
- c.setId(id);
- service.updateById(c);
- return ApiResponse.ok(c);
- }
+    @PostMapping
+    public ApiResponse<City> create(@RequestBody City c) {
+        service.save(c);
+        return ApiResponse.ok(c);
+    }
 
- @DeleteMapping("/{id}")
- public ApiResponse<Void> delete(@PathVariable Long id){
- service.removeById(id);
- return ApiResponse.ok(null);
- }
+    @PutMapping("/{id}")
+    public ApiResponse<City> update(@PathVariable Long id, @RequestBody City c) {
+        c.setId(id);
+        service.updateById(c);
+        return ApiResponse.ok(c);
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(@PathVariable Long id) {
+        service.removeById(id);
+        return ApiResponse.ok(null);
+    }
 }
 
 
