@@ -4,13 +4,14 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 public class JwtFilter extends OncePerRequestFilter {
 
  @Override
- protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+ protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain)
  throws ServletException, IOException {
  String path = request.getRequestURI();
  if ("OPTIONS".equalsIgnoreCase(request.getMethod())) { chain.doFilter(request, response); return; }
@@ -26,7 +27,8 @@ public class JwtFilter extends OncePerRequestFilter {
  return;
  } catch (Exception ignored) {}
  }
- response.setStatus(401);
+ // 没有 token 或 token 无效：继续放行，让 Spring Security 根据配置决定是否需要认证
+ chain.doFilter(request, response);
  }
 }
 

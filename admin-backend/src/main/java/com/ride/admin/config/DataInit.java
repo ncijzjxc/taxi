@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import com.ride.admin.common.OrderStatusConst;
 
 @Configuration
 public class DataInit {
@@ -34,7 +35,7 @@ public class DataInit {
  vehicleMapper.insert(v);
  OrderEntity o = new OrderEntity();
  o.setPassengerId(1L); o.setDriverId(d.getId()); o.setVehicleId(v.getId());
- o.setStartAddr("A"); o.setEndAddr("B"); o.setOrderStatus("completed"); o.setAmount(new BigDecimal("25.5")); o.setCreateTime(LocalDateTime.now());
+  o.setStartAddr("A"); o.setEndAddr("B"); o.setOrderStatus(OrderStatusConst.FINISHED); o.setAmount(new BigDecimal("25.5")); o.setCreateTime(LocalDateTime.now());
  orderMapper.insert(o);
  City c = new City(); c.setName("Shenzhen"); c.setOpenStatus("open"); c.setOperateStatus("running");
  cityMapper.insert(c);

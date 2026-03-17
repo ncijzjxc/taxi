@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@TableName(" price_rule\)
+@TableName("price_rule")
 public class PriceRule {
  @TableId(type = IdType.AUTO)
  private Long id;

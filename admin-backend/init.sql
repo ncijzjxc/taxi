@@ -45,9 +45,18 @@ CREATE TABLE orders (
  passenger_id BIGINT,
  driver_id BIGINT,
  vehicle_id BIGINT,
+ city_id BIGINT,
  start_addr VARCHAR(255),
  end_addr VARCHAR(255),
- order_status VARCHAR(20),
+ pickup_lat DECIMAL(10,6),
+ pickup_lng DECIMAL(10,6),
+ dropoff_lat DECIMAL(10,6),
+ dropoff_lng DECIMAL(10,6),
+ car_type VARCHAR(20),
+ distance_km DECIMAL(10,2),
+ duration_min INT,
+ estimated_fare DECIMAL(10,2),
+ order_status INT,
  amount DECIMAL(10,2),
  create_time DATETIME
 );
@@ -81,6 +90,8 @@ CREATE TABLE price_rule (
  price_per_km DECIMAL(10,2),
  price_per_min DECIMAL(10,2),
  version VARCHAR(20),
+ status VARCHAR(20) DEFAULT 'enabled',
+ effective_time DATETIME,
  create_time DATETIME
 );
 
@@ -117,12 +128,12 @@ INSERT INTO vehicle (plate_no,model,status,driver_id) VALUES
 ('粤B10005','特斯拉','normal',5);
 
 /* orders */
-INSERT INTO orders (passenger_id,driver_id,vehicle_id,start_addr,end_addr,order_status,amount,create_time) VALUES
-(1,1,1,'南山','福田','completed',25.50,NOW()),
-(2,2,2,'宝安','南山','ongoing',18.00,NOW()),
-(3,3,3,'罗湖','福田','canceled',0.00,NOW()),
-(4,4,4,'南山','龙华','completed',32.00,NOW()),
-(5,5,5,'福田','罗湖','ongoing',22.50,NOW());
+INSERT INTO orders (passenger_id,driver_id,vehicle_id,city_id,start_addr,end_addr,car_type,distance_km,duration_min,estimated_fare,order_status,amount,create_time) VALUES
+(1,1,1,1,'南山','福田','economy',12.30,28,35.20,4,25.50,NOW()),
+(2,2,2,1,'宝安','南山','premium',9.10,22,34.10,1,18.00,NOW()),
+(3,3,3,1,'罗湖','福田','economy',0.00,0,0.00,4,0.00,NOW()),
+(4,4,4,1,'南山','龙华','luxury',18.50,35,77.30,4,32.00,NOW()),
+(5,5,5,1,'福田','罗湖','premium',10.20,25,40.50,2,22.50,NOW());
 
 /* city */
 INSERT INTO city (name,open_status,operate_status) VALUES
@@ -130,7 +141,11 @@ INSERT INTO city (name,open_status,operate_status) VALUES
 ('广州','open','running'),
 ('北京','open','running'),
 ('上海','open','paused'),
-('杭州','close','paused');
+('杭州','close','paused'),
+('西安','open','running'),
+('大连','open','running'),
+('沈阳','open','running'),
+('成都','open','running');
 
 /* feedback */
 INSERT INTO feedback (user_type,user_id,type,content,status,create_time) VALUES
@@ -141,19 +156,22 @@ INSERT INTO feedback (user_type,user_id,type,content,status,create_time) VALUES
 ('passenger',3,'praise','服务很好','processed',NOW());
 
 /* price rule */
-INSERT INTO price_rule (city_id, car_type, start_price, start_km, price_per_km, price_per_min, version, create_time) VALUES
-(1,'economy',10.00,3,2.00,0.50,'v1',NOW()),
-(1,'premium',15.00,3,3.00,0.80,'v1',NOW()),
-(1,'luxury',25.00,3,5.00,1.20,'v1',NOW());
-ALTER TABLE price_rule
-ADD COLUMN status VARCHAR(20) DEFAULT 'enabled',
-ADD COLUMN effective_time DATETIME;
-
-
-UPDATE price_rule SET status='enabled', effective_time=NOW();
-ALTER TABLE price_rule
-ADD CONSTRAINT fk_price_rule_city FOREIGN KEY (city_id) REFERENCES city(id);
-ALTER TABLE price_rule
-DROP FOREIGN KEY fk_price_rule_city;
-ALTER TABLE price_rule
-ADD CONSTRAINT fk_price_rule_city FOREIGN KEY (city_id) REFERENCES city(id) ON DELETE CASCADE;
+INSERT INTO price_rule (city_id, car_type, start_price, start_km, price_per_km, price_per_min, version, status, effective_time, create_time) VALUES
+(1,'economy',10.00,3,2.00,0.50,'v1','enabled',NOW(),NOW()),
+(1,'premium',15.00,3,3.00,0.80,'v1','enabled',NOW(),NOW()),
+(1,'luxury',25.00,3,5.00,1.20,'v1','enabled',NOW(),NOW()),
+(3,'economy',10.00,3,2.00,0.50,'v1','enabled',NOW(),NOW()),
+(3,'premium',15.00,3,3.00,0.80,'v1','enabled',NOW(),NOW()),
+(3,'luxury',25.00,3,5.00,1.20,'v1','enabled',NOW(),NOW()),
+(6,'economy',10.00,3,2.00,0.50,'v1','enabled',NOW(),NOW()),
+(6,'premium',15.00,3,3.00,0.80,'v1','enabled',NOW(),NOW()),
+(6,'luxury',25.00,3,5.00,1.20,'v1','enabled',NOW(),NOW()),
+(7,'economy',10.00,3,2.00,0.50,'v1','enabled',NOW(),NOW()),
+(7,'premium',15.00,3,3.00,0.80,'v1','enabled',NOW(),NOW()),
+(7,'luxury',25.00,3,5.00,1.20,'v1','enabled',NOW(),NOW()),
+(8,'economy',10.00,3,2.00,0.50,'v1','enabled',NOW(),NOW()),
+(8,'premium',15.00,3,3.00,0.80,'v1','enabled',NOW(),NOW()),
+(8,'luxury',25.00,3,5.00,1.20,'v1','enabled',NOW(),NOW()),
+(9,'economy',10.00,3,2.00,0.50,'v1','enabled',NOW(),NOW()),
+(9,'premium',15.00,3,3.00,0.80,'v1','enabled',NOW(),NOW()),
+(9,'luxury',25.00,3,5.00,1.20,'v1','enabled',NOW(),NOW());

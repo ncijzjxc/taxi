@@ -18,7 +18,13 @@ public class OrderController {
  @RequestParam(defaultValue = "10") int size){
  Page<OrderEntity> p = new Page<>(page, size);
  if ("all".equals(status)) return ApiResponse.ok(service.page(p));
- return ApiResponse.ok(service.lambdaQuery().eq(OrderEntity::getOrderStatus, status).page(p));
+ // 兼容新老两种状态值：新为 1~4，老为字符串
+ try {
+   int s = Integer.parseInt(status);
+   return ApiResponse.ok(service.lambdaQuery().eq(OrderEntity::getOrderStatus, s).page(p));
+ } catch (Exception ignored) {
+   return ApiResponse.ok(service.page(p));
+ }
  }
 
  @PostMapping

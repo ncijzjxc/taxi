@@ -18,7 +18,8 @@ public class PriceRuleController {
  @RequestParam(defaultValue = "1") int page,
  @RequestParam(defaultValue = "10") int size){
  Page<PriceRule> p = new Page<>(page, size);
- var q = service.lambdaQuery().eq(PriceRule::getCityId, cityId);
+ com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper<PriceRule> q =
+   service.lambdaQuery().eq(PriceRule::getCityId, cityId);
  if (carType!=null && !carType.isEmpty()) q.eq(PriceRule::getCarType, carType);
  return ApiResponse.ok(q.orderByDesc(PriceRule::getEffectiveTime).page(p));
  }

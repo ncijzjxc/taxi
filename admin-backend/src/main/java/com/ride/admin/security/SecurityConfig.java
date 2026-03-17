@@ -14,6 +14,8 @@ public class SecurityConfig {
  http.cors().and().csrf().disable()
  .authorizeRequests(auth -> auth
  .antMatchers("/api/auth/login", "/error").permitAll()
+   .antMatchers("/api/passenger/**").permitAll()
+   .antMatchers("/api/driver/**").permitAll()
  .antMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
  .anyRequest().authenticated()
  )
