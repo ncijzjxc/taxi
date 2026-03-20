@@ -12,13 +12,26 @@ api.interceptors.request.use(config => {
 })
 
 // 统一把后端 ApiResponse<T> 的 data 字段解包出来
-// 后端返回 { code, message, data }，这里直接返回 data，前端拿到的就是业务数据
-api.interceptors.response.use(res => res.data.data, err => {
- if (err.response && err.response.status ===401) {
- localStorage.removeItem('token')
- window.location.href = '/login'
- }
- return Promise.reject(err)
-})
+// 后端返回 { code, message, data }，code != 0 时走失败分支
+api.interceptors.response.use(
+  res => {
+    const body = res.data
+    if (body && typeof body.code === 'number') {
+      if (body.code !== 0) {
+        const msg = body.message || '请求失败'
+        return Promise.reject(new Error(msg))
+      }
+      return body.data
+    }
+    return body
+  },
+  err => {
+    if (err.response && err.response.status === 401) {
+      localStorage.removeItem('token')
+      window.location.href = '/login'
+    }
+    return Promise.reject(err)
+  }
+)
 
 export default api

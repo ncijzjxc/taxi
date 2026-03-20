@@ -20,8 +20,8 @@ public class AuthController {
  public ApiResponse<Map<String,String>> login(@RequestBody LoginReq req){
  Admin admin = adminMapper.selectOne(new com.baomidou.mybatisplus.core.conditions.query.QueryWrapper<Admin>()
  .eq("username", req.getUsername()));
- if (admin==null) throw new RuntimeException("user not found");
- if (!admin.getPassword().equals(req.getPassword())) throw new RuntimeException("password error");
+ if (admin==null) throw new RuntimeException("用户不存在");
+ if (!admin.getPassword().equals(req.getPassword())) throw new RuntimeException("用户名或密码错误");
  String token = JwtUtil.generateToken(admin.getUsername());
  Map<String,String> map = new HashMap<>();
  map.put("token", token);

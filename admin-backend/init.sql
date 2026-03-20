@@ -11,23 +11,29 @@ CREATE TABLE admin (
  role VARCHAR(20)
 );
 
-/*乘客 */
+/*乘客（ID 为手动生成的 6 位数） */
 CREATE TABLE passenger (
- id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ id BIGINT PRIMARY KEY,
+ username VARCHAR(50) NOT NULL UNIQUE,
  name VARCHAR(50),
  phone VARCHAR(20),
+ password VARCHAR(100) NOT NULL,
  register_time DATETIME,
  status VARCHAR(20)
 );
 
-/*司机 */
+/*司机（ID 为手动生成的 6 位数） */
 CREATE TABLE driver (
- id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ id BIGINT PRIMARY KEY,
+ username VARCHAR(50) NOT NULL UNIQUE,
  name VARCHAR(50),
  phone VARCHAR(20),
+ password VARCHAR(100) NOT NULL,
  license_no VARCHAR(50),
+ car_type VARCHAR(20),
  audit_status VARCHAR(20),
- online_status VARCHAR(20)
+ online_status VARCHAR(20),
+ city_id BIGINT
 );
 
 /*车辆 */
@@ -103,37 +109,43 @@ INSERT INTO admin (username,password,role) VALUES
 ('ops','123456','NORMAL'),
 ('auditor','123456','NORMAL');
 
-/* passenger */
-INSERT INTO passenger (name,phone,register_time,status) VALUES
-('张三','13800000001',NOW(),'normal'),
-('李四','13800000002',NOW(),'normal'),
-('王五','13800000003',NOW(),'normal'),
-('赵六','13800000004',NOW(),'frozen'),
-('周七','13800000005',NOW(),'normal');
+/* passenger（演示数据使用 6 位 ID） */
+INSERT INTO passenger (id,username,name,phone,password,register_time,status) VALUES
+(100001,'p100001','张三','13800000001','123456',NOW(),'normal'),
+(100002,'p100002','李四','13800000002','123456',NOW(),'normal'),
+(100003,'p100003','王五','13800000003','123456',NOW(),'normal'),
+(100004,'p100004','赵六','13800000004','123456',NOW(),'frozen'),
+(100005,'p100005','周七','13800000005','123456',NOW(),'normal');
 
-/* driver */
-INSERT INTO driver (name,phone,license_no,audit_status,online_status) VALUES
-('司机A','13900000001','A11111','approved','online'),
-('司机B','13900000002','A22222','approved','offline'),
-('司机C','13900000003','A33333','pending','offline'),
-('司机D','13900000004','A44444','approved','online'),
-('司机E','13900000005','A55555','rejected','offline');
+/* driver（演示数据使用 6 位 ID） */
+INSERT INTO driver (id,username,name,phone,password,license_no,car_type,audit_status,online_status,city_id) VALUES
+(200001,'d200001','司机A','13900000001','123456','A11111','economy','approved','online',1),
+(200002,'d200002','司机B','13900000002','123456','A22222','premium','approved','offline',1),
+(200003,'d200003','司机C','13900000003','123456','A33333','economy','approved','offline',3),
+(200004,'d200004','司机D','13900000004','123456','A44444','luxury','approved','online',6),
+(200005,'d200005','司机E','13900000005','123456','A55555','premium','rejected','offline',7);
 
 /* vehicle */
 INSERT INTO vehicle (plate_no,model,status,driver_id) VALUES
-('粤B10001','大众','normal',1),
-('粤B10002','丰田','normal',2),
-('粤B10003','本田','maintenance',3),
-('粤B10004','比亚迪','normal',4),
-('粤B10005','特斯拉','normal',5);
+('粤B10001','大众','normal',200001),
+('粤B10002','丰田','normal',200002),
+('粤B10003','本田','maintenance',200003),
+('粤B10004','比亚迪','normal',200004),
+('粤B10005','特斯拉','normal',200005);
 
 /* orders */
 INSERT INTO orders (passenger_id,driver_id,vehicle_id,city_id,start_addr,end_addr,car_type,distance_km,duration_min,estimated_fare,order_status,amount,create_time) VALUES
-(1,1,1,1,'南山','福田','economy',12.30,28,35.20,4,25.50,NOW()),
-(2,2,2,1,'宝安','南山','premium',9.10,22,34.10,1,18.00,NOW()),
-(3,3,3,1,'罗湖','福田','economy',0.00,0,0.00,4,0.00,NOW()),
-(4,4,4,1,'南山','龙华','luxury',18.50,35,77.30,4,32.00,NOW()),
-(5,5,5,1,'福田','罗湖','premium',10.20,25,40.50,2,22.50,NOW());
+(100001,200001,1,1,'南山','福田','economy',12.30,28,35.20,4,25.50,NOW()),
+(100002,200002,2,1,'宝安','南山','premium',9.10,22,34.10,1,18.00,NOW()),
+(100003,200003,3,1,'罗湖','福田','economy',0.00,0,0.00,4,0.00,NOW()),
+(100004,200004,4,1,'南山','龙华','luxury',18.50,35,77.30,4,32.00,NOW()),
+(100005,200005,5,1,'福田','罗湖','premium',10.20,25,40.50,2,22.50,NOW()),
+-- 以下为“待接单”样例，覆盖乘客端选择的城市（3/6/7/8/9），用于验证司机切城不跨城
+(100001,NULL,NULL,3,'天安门','望京','economy',8.20,20,28.60,1,28.60,NOW()),
+(100002,NULL,NULL,6,'大雁塔','钟楼','premium',6.50,18,31.80,1,31.80,NOW()),
+(100003,NULL,NULL,7,'星海广场','大连北站','economy',12.00,28,34.00,1,34.00,NOW()),
+(100004,NULL,NULL,8,'中街','沈阳站','premium',7.40,19,30.50,1,30.50,NOW()),
+(100005,NULL,NULL,9,'春熙路','天府广场','luxury',5.60,16,45.20,1,45.20,NOW());
 
 /* city */
 INSERT INTO city (name,open_status,operate_status) VALUES
@@ -149,11 +161,11 @@ INSERT INTO city (name,open_status,operate_status) VALUES
 
 /* feedback */
 INSERT INTO feedback (user_type,user_id,type,content,status,create_time) VALUES
-('passenger',1,'suggestion','希望增加优惠券','pending',NOW()),
-('passenger',2,'complaint','司机迟到','processed',NOW()),
-('driver',1,'praise','平台派单效率高','processed',NOW()),
-('driver',2,'suggestion','希望增加油补','pending',NOW()),
-('passenger',3,'praise','服务很好','processed',NOW());
+('passenger',100001,'suggestion','希望增加优惠券','pending',NOW()),
+('passenger',100002,'complaint','司机迟到','processed',NOW()),
+('driver',200001,'praise','平台派单效率高','processed',NOW()),
+('driver',200002,'suggestion','希望增加油补','pending',NOW()),
+('passenger',100003,'praise','服务很好','processed',NOW());
 
 /* price rule */
 INSERT INTO price_rule (city_id, car_type, start_price, start_km, price_per_km, price_per_min, version, status, effective_time, create_time) VALUES

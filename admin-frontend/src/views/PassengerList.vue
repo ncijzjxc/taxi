@@ -6,7 +6,8 @@
  <el-button type="success" @click="openDialog()">新增</el-button>
  </div>
  <el-table :data="list" style="width:100%">
- <el-table-column prop="id" label="ID" width="80"/>
+ <el-table-column prop="id" label="ID" width="90"/>
+ <el-table-column prop="username" label="账号" width="120"/>
  <el-table-column prop="name" label="姓名"/>
  <el-table-column prop="phone" label="手机"/>
  <el-table-column prop="registerTime" label="注册时间"/>
@@ -22,6 +23,7 @@
 
  <el-dialog v-model="dialogVisible" title="乘客">
  <el-form :model="form">
+ <el-form-item label="账号"><el-input v-model="form.username"/></el-form-item>
  <el-form-item label="姓名"><el-input v-model="form.name"/></el-form-item>
  <el-form-item label="手机"><el-input v-model="form.phone"/></el-form-item>
  <el-form-item label="状态"><el-input v-model="form.status"/></el-form-item>
@@ -43,7 +45,7 @@ const page = ref(1)
 const size = ref(10)
 const query = reactive({ name:'' })
 const dialogVisible = ref(false)
-const form = reactive({ id:null, name:'', phone:'', status:'' })
+const form = reactive({ id:null, username:'', name:'', phone:'', status:'' })
 
 const load = async ()=>{
  const res = await api.get('/passengers', { params:{ page:page.value, size:size.value, name: query.name } })
@@ -52,7 +54,7 @@ const load = async ()=>{
 }
 
 const openDialog = (row)=>{
- if (row){ Object.assign(form,row) } else { Object.assign(form,{id:null,name:'',phone:'',status:''}) }
+ if (row){ Object.assign(form,row) } else { Object.assign(form,{id:null,username:'',name:'',phone:'',status:''}) }
  dialogVisible.value=true
 }
 

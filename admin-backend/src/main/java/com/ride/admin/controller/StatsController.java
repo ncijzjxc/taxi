@@ -27,8 +27,11 @@ public class StatsController {
  public ApiResponse<Map<String,Object>> overview(){
  List<OrderEntity> orders = orderService.list();
  long total = orders.size();
- long valid = orders.stream().filter(o->!"canceled".equals(o.getOrderStatus())).count();
- BigDecimal income = orders.stream().map(o->o.getAmount()==null?BigDecimal.ZERO:o.getAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
+ long valid = orders.stream().filter(o -> o.getOrderStatus() != null && o.getOrderStatus() != 0).count();
+ BigDecimal income = orders.stream()
+   .filter(o -> o.getOrderStatus() != null && o.getOrderStatus() == 4)
+   .map(o->o.getAmount()==null?BigDecimal.ZERO:o.getAmount())
+   .reduce(BigDecimal.ZERO, BigDecimal::add);
  long activeDrivers = driverService.lambdaQuery().eq(Driver::getOnlineStatus, "online").count();
  Map<String,Object> map = new HashMap<>();
  map.put("totalOrders", total);
@@ -45,9 +48,23 @@ public class StatsController {
  for (City c: cities){
  Map<String,Object> m = new HashMap<>();
  m.put("city", c.getName());
- m.put("totalOrders", orderService.count());
- m.put("totalIncome", orderService.list().stream().map(o->o.getAmount()==null?BigDecimal.ZERO:o.getAmount()).reduce(BigDecimal.ZERO, BigDecimal::add));
- m.put("activeDrivers", driverService.lambdaQuery().eq(Driver::getOnlineStatus, "online").count());
+ // 按城市过滤订单
+ long cityOrderCount = orderService.lambdaQuery().eq(OrderEntity::getCityId, c.getId()).count();
+ BigDecimal cityIncome = orderService.lambdaQuery()
+   .eq(OrderEntity::getCityId, c.getId())
+   .eq(OrderEntity::getOrderStatus, 4)
+   .list()
+   .stream()
+   .map(o->o.getAmount()==null?BigDecimal.ZERO:o.getAmount())
+   .reduce(BigDecimal.ZERO, BigDecimal::add);
+ // 按城市过滤司机
+ long cityDriverCount = driverService.lambdaQuery()
+   .eq(Driver::getCityId, c.getId())
+   .eq(Driver::getOnlineStatus, "online")
+   .count();
+ m.put("totalOrders", cityOrderCount);
+ m.put("totalIncome", cityIncome);
+ m.put("activeDrivers", cityDriverCount);
  list.add(m);
  }
  return ApiResponse.ok(list);

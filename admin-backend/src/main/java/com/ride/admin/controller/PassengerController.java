@@ -25,8 +25,23 @@ public class PassengerController {
 
  @PostMapping
  public ApiResponse<Passenger> create(@RequestBody Passenger p){
+ if (p.getUsername() == null || p.getUsername().isEmpty()) {
+   throw new RuntimeException("请输入账号");
+ }
+ if (p.getId() == null) {
+   p.setId(generatePassengerId());
+ }
  service.save(p);
  return ApiResponse.ok(p);
+ }
+
+ private long generatePassengerId() {
+   while (true) {
+     long id = 100000L + (long) (Math.random() * 900000L);
+     if (service.getById(id) == null) {
+       return id;
+     }
+   }
  }
 
  @PutMapping("/{id}")

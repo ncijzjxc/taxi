@@ -28,8 +28,23 @@ public class DriverController {
 
     @PostMapping
     public ApiResponse<Driver> create(@RequestBody Driver d) {
+        if (d.getUsername() == null || d.getUsername().isEmpty()) {
+            throw new RuntimeException("请输入账号");
+        }
+        if (d.getId() == null) {
+            d.setId(generateDriverId());
+        }
         service.save(d);
         return ApiResponse.ok(d);
+    }
+
+    private long generateDriverId() {
+        while (true) {
+            long id = 100000L + (long) (Math.random() * 900000L);
+            if (service.getById(id) == null) {
+                return id;
+            }
+        }
     }
 
     @PutMapping("/{id}")

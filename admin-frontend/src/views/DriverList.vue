@@ -6,10 +6,12 @@
  <el-button type="success" @click="openDialog()">新增</el-button>
  </div>
  <el-table :data="list" style="width:100%">
- <el-table-column prop="id" label="ID" width="80"/>
+ <el-table-column prop="id" label="ID" width="90"/>
+ <el-table-column prop="username" label="账号" width="120"/>
  <el-table-column prop="name" label="姓名"/>
  <el-table-column prop="phone" label="手机"/>
  <el-table-column prop="licenseNo" label="驾照号"/>
+ <el-table-column prop="carType" label="车型" width="90"/>
  <el-table-column prop="onlineStatus" label="上线状态"/>
  <el-table-column prop="auditStatus" label="审核状态"/>
  <el-table-column label="操作" width="160">
@@ -23,9 +25,17 @@
 
  <el-dialog v-model="dialogVisible" title="司机">
  <el-form :model="form">
+ <el-form-item label="账号"><el-input v-model="form.username"/></el-form-item>
  <el-form-item label="姓名"><el-input v-model="form.name"/></el-form-item>
  <el-form-item label="手机"><el-input v-model="form.phone"/></el-form-item>
  <el-form-item label="驾照号"><el-input v-model="form.licenseNo"/></el-form-item>
+ <el-form-item label="车型">
+  <el-select v-model="form.carType" placeholder="选择车型" style="width: 100%;">
+   <el-option label="经济" value="economy" />
+   <el-option label="舒适" value="premium" />
+   <el-option label="豪华" value="luxury" />
+  </el-select>
+ </el-form-item>
  <el-form-item label="上线状态"><el-input v-model="form.onlineStatus"/></el-form-item>
  <el-form-item label="审核状态"><el-input v-model="form.auditStatus"/></el-form-item>
  </el-form>
@@ -46,7 +56,7 @@ const page = ref(1)
 const size = ref(10)
 const query = reactive({ name:'' })
 const dialogVisible = ref(false)
-const form = reactive({ id:null, name:'', phone:'', licenseNo:'', onlineStatus:'', auditStatus:'' })
+const form = reactive({ id:null, username:'', name:'', phone:'', licenseNo:'', carType:'economy', onlineStatus:'', auditStatus:'' })
 
 const load = async ()=>{
  const res = await api.get('/drivers', { params:{ page:page.value, size:size.value, name: query.name } })
@@ -55,7 +65,12 @@ const load = async ()=>{
 }
 
 const openDialog = (row)=>{
- if (row){ Object.assign(form,row) } else { Object.assign(form,{id:null,name:'',phone:'',licenseNo:'',onlineStatus:'',auditStatus:''}) }
+ if (row){
+  Object.assign(form, row)
+  if (!form.carType) form.carType = 'economy'
+ } else {
+  Object.assign(form,{id:null,username:'',name:'',phone:'',licenseNo:'',carType:'economy',onlineStatus:'',auditStatus:''})
+ }
  dialogVisible.value=true
 }
 
