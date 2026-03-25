@@ -44,6 +44,7 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import api from '../api'
 const list = ref([])
 const total = ref(0)
@@ -70,7 +71,24 @@ const save = async ()=>{
  load()
 }
 
-const remove = async (id)=>{ await api.delete(`/feedback/${id}`); load() }
+const remove = async (id) => {
+  try {
+    await ElMessageBox.confirm('确定要删除该反馈记录吗？删除后不可恢复。', '删除确认', {
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+  } catch {
+    return
+  }
+  try {
+    await api.delete(`/feedback/${id}`)
+    ElMessage.success('已删除')
+    load()
+  } catch (e) {
+    ElMessage.error(e?.message || '删除失败')
+  }
+}
 
 onMounted(load)
 </script>

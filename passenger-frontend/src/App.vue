@@ -20,7 +20,11 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const showHeader = computed(() => route.path !== '/login' && route.path !== '/register')
+const showHeader = computed(() =>
+  route.path !== '/login' &&
+  route.path !== '/register' &&
+  route.path !== '/reset-password'
+)
 </script>
 
 <style scoped>

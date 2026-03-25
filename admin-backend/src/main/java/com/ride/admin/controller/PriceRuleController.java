@@ -24,6 +24,23 @@ public class PriceRuleController {
  return ApiResponse.ok(q.orderByDesc(PriceRule::getEffectiveTime).page(p));
  }
 
+ @GetMapping("/latest")
+ public ApiResponse<PriceRule> latest(@RequestParam Long cityId,
+                                      @RequestParam String carType){
+ if (cityId == null) throw new RuntimeException("cityId required");
+ if (carType == null || carType.isEmpty()) throw new RuntimeException("carType required");
+ PriceRule r = service.lambdaQuery()
+   .eq(PriceRule::getCityId, cityId)
+   .eq(PriceRule::getCarType, carType)
+   .eq(PriceRule::getStatus, "enabled")
+   .orderByDesc(PriceRule::getEffectiveTime)
+   .orderByDesc(PriceRule::getId)
+   .last("limit 1")
+   .one();
+ if (r == null) throw new RuntimeException("price rule not found");
+ return ApiResponse.ok(r);
+ }
+
  @PostMapping
  public ApiResponse<PriceRule> create(@RequestBody PriceRule r){
  if (r.getCityId()==null) throw new RuntimeException("cityId required");

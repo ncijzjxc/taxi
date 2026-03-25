@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import com.ride.admin.common.OrderStatusConst;
+import java.time.LocalDateTime;
 
 @Configuration
 public class DataInit {
@@ -24,7 +24,7 @@ public class DataInit {
  }
  if (passengerMapper.selectCount(null)==0){
  Passenger p = new Passenger();
- p.setName("UserA"); p.setPhone("13800000000"); p.setRegisterTime(LocalDateTime.now()); p.setStatus("normal");
+  p.setName("UserA"); p.setPhone("13800000000"); p.setStatus("normal");
  passengerMapper.insert(p);
  }
  if (driverMapper.selectCount(null)==0){

@@ -2,8 +2,8 @@ package com.ride.admin.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,6 +15,9 @@ public class Passenger {
  private String name;
  private String phone;
  private String password;
- private LocalDateTime registerTime;
+ private String gender;
+ private LocalDate birthday;
  private String status;
+ private LocalDateTime createTime;
+ private LocalDateTime updateTime;
 }

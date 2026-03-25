@@ -10,8 +10,12 @@
  <el-table-column prop="username" label="账号" width="120"/>
  <el-table-column prop="name" label="姓名"/>
  <el-table-column prop="phone" label="手机"/>
+ <el-table-column prop="gender" label="性别" width="80"/>
+ <el-table-column prop="birthday" label="生日" width="120"/>
  <el-table-column prop="licenseNo" label="驾照号"/>
  <el-table-column prop="carType" label="车型" width="90"/>
+ <el-table-column prop="createTime" label="创建时间"/>
+ <el-table-column prop="updateTime" label="更新时间"/>
  <el-table-column prop="onlineStatus" label="上线状态"/>
  <el-table-column prop="auditStatus" label="审核状态"/>
  <el-table-column label="操作" width="160">
@@ -28,6 +32,13 @@
  <el-form-item label="账号"><el-input v-model="form.username"/></el-form-item>
  <el-form-item label="姓名"><el-input v-model="form.name"/></el-form-item>
  <el-form-item label="手机"><el-input v-model="form.phone"/></el-form-item>
+ <el-form-item label="性别">
+  <el-select v-model="form.gender" style="width:100%">
+   <el-option label="男" value="男" />
+   <el-option label="女" value="女" />
+  </el-select>
+ </el-form-item>
+ <el-form-item label="生日"><el-input v-model="form.birthday" placeholder="YYYY-MM-DD"/></el-form-item>
  <el-form-item label="驾照号"><el-input v-model="form.licenseNo"/></el-form-item>
  <el-form-item label="车型">
   <el-select v-model="form.carType" placeholder="选择车型" style="width: 100%;">
@@ -49,6 +60,7 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import api from '../api'
 const list = ref([])
 const total = ref(0)
@@ -56,7 +68,7 @@ const page = ref(1)
 const size = ref(10)
 const query = reactive({ name:'' })
 const dialogVisible = ref(false)
-const form = reactive({ id:null, username:'', name:'', phone:'', licenseNo:'', carType:'economy', onlineStatus:'', auditStatus:'' })
+const form = reactive({ id:null, username:'', name:'', phone:'', gender:'', birthday:'', licenseNo:'', carType:'economy', onlineStatus:'', auditStatus:'' })
 
 const load = async ()=>{
  const res = await api.get('/drivers', { params:{ page:page.value, size:size.value, name: query.name } })
@@ -69,7 +81,7 @@ const openDialog = (row)=>{
   Object.assign(form, row)
   if (!form.carType) form.carType = 'economy'
  } else {
-  Object.assign(form,{id:null,username:'',name:'',phone:'',licenseNo:'',carType:'economy',onlineStatus:'',auditStatus:''})
+  Object.assign(form,{id:null,username:'',name:'',phone:'',gender:'',birthday:'',licenseNo:'',carType:'economy',onlineStatus:'',auditStatus:''})
  }
  dialogVisible.value=true
 }
@@ -80,7 +92,24 @@ const save = async ()=>{
  load()
 }
 
-const remove = async (id)=>{ await api.delete(`/drivers/${id}`); load() }
+const remove = async (id) => {
+  try {
+    await ElMessageBox.confirm('确定要删除该司机吗？删除后不可恢复。', '删除确认', {
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+  } catch {
+    return
+  }
+  try {
+    await api.delete(`/drivers/${id}`)
+    ElMessage.success('已删除')
+    load()
+  } catch (e) {
+    ElMessage.error(e?.message || '删除失败')
+  }
+}
 
 onMounted(load)
 </script>

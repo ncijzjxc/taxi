@@ -2,8 +2,8 @@ package com.ride.admin.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Data
 
@@ -13,4 +13,6 @@ public class City {
  private String name;
  private String openStatus;
  private String operateStatus;
+ private LocalDateTime createTime;
+ private LocalDateTime updateTime;
 }

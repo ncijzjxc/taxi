@@ -8,7 +8,11 @@ CREATE TABLE admin (
  id BIGINT PRIMARY KEY AUTO_INCREMENT,
  username VARCHAR(50) NOT NULL,
  password VARCHAR(100) NOT NULL,
- role VARCHAR(20)
+ gender VARCHAR(10),
+ birthday DATE,
+ role VARCHAR(20),
+ create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+ update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 /*乘客（ID 为手动生成的 6 位数） */
@@ -18,8 +22,11 @@ CREATE TABLE passenger (
  name VARCHAR(50),
  phone VARCHAR(20),
  password VARCHAR(100) NOT NULL,
- register_time DATETIME,
- status VARCHAR(20)
+ gender VARCHAR(10),
+ birthday DATE,
+ status VARCHAR(20),
+ create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+ update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 /*司机（ID 为手动生成的 6 位数） */
@@ -29,11 +36,15 @@ CREATE TABLE driver (
  name VARCHAR(50),
  phone VARCHAR(20),
  password VARCHAR(100) NOT NULL,
+ gender VARCHAR(10),
+ birthday DATE,
  license_no VARCHAR(50),
  car_type VARCHAR(20),
  audit_status VARCHAR(20),
  online_status VARCHAR(20),
- city_id BIGINT
+ city_id BIGINT,
+ create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+ update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 /*车辆 */
@@ -72,7 +83,9 @@ CREATE TABLE city (
  id BIGINT PRIMARY KEY AUTO_INCREMENT,
  name VARCHAR(50),
  open_status VARCHAR(20),
- operate_status VARCHAR(20)
+ operate_status VARCHAR(20),
+ create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+ update_time DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 /*反馈 */
@@ -84,6 +97,28 @@ CREATE TABLE feedback (
  content VARCHAR(255),
  status VARCHAR(20),
  create_time DATETIME
+);
+
+/* 登录日志 */
+CREATE TABLE login_log (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ user_type VARCHAR(20) NOT NULL,
+ user_id BIGINT,
+ username VARCHAR(50),
+ success TINYINT NOT NULL,
+ message VARCHAR(255),
+ ip VARCHAR(64),
+ login_time DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+/* 乘客/司机「我的订单」按用户隐藏展示，不删除 orders 表 */
+CREATE TABLE user_hidden_order (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ user_type VARCHAR(20) NOT NULL COMMENT 'passenger | driver',
+ user_id BIGINT NOT NULL,
+ order_id BIGINT NOT NULL,
+ create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+ UNIQUE KEY uk_user_order (user_type, user_id, order_id)
 );
 
 /*计价规则 */
@@ -101,29 +136,38 @@ CREATE TABLE price_rule (
  create_time DATETIME
 );
 
+CREATE TABLE IF NOT EXISTS user_hidden_order (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_type VARCHAR(20) NOT NULL COMMENT 'passenger | driver',
+    user_id BIGINT NOT NULL,
+    order_id BIGINT NOT NULL,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_user_order (user_type, user_id, order_id)
+);
+
 /* admin */
-INSERT INTO admin (username,password,role) VALUES
-('admin','123456','SUPER'),
-('admin2','123456','NORMAL'),
-('manager','123456','NORMAL'),
-('ops','123456','NORMAL'),
-('auditor','123456','NORMAL');
+INSERT INTO admin (username,password,gender,birthday,role,create_time,update_time) VALUES
+('admin','123456','男','1990-01-01','SUPER',NOW(),NOW()),
+('admin2','123456','女','1992-03-12','NORMAL',NOW(),NOW()),
+('manager','123456','男','1988-07-18','NORMAL',NOW(),NOW()),
+('ops','123456','女','1993-09-08','NORMAL',NOW(),NOW()),
+('auditor','123456','男','1991-11-20','NORMAL',NOW(),NOW());
 
 /* passenger（演示数据使用 6 位 ID） */
-INSERT INTO passenger (id,username,name,phone,password,register_time,status) VALUES
-(100001,'p100001','张三','13800000001','123456',NOW(),'normal'),
-(100002,'p100002','李四','13800000002','123456',NOW(),'normal'),
-(100003,'p100003','王五','13800000003','123456',NOW(),'normal'),
-(100004,'p100004','赵六','13800000004','123456',NOW(),'frozen'),
-(100005,'p100005','周七','13800000005','123456',NOW(),'normal');
+INSERT INTO passenger (id,username,name,phone,password,gender,birthday,status,create_time,update_time) VALUES
+(100001,'p100001','张三','13800000001','123456','男','1998-01-02','normal',NOW(),NOW()),
+(100002,'p100002','李四','13800000002','123456','女','1999-03-12','normal',NOW(),NOW()),
+(100003,'p100003','王五','13800000003','123456','男','1997-06-20','normal',NOW(),NOW()),
+(100004,'p100004','赵六','13800000004','123456','女','1996-09-18','frozen',NOW(),NOW()),
+(100005,'p100005','周七','13800000005','123456','男','2000-12-05','normal',NOW(),NOW());
 
 /* driver（演示数据使用 6 位 ID） */
-INSERT INTO driver (id,username,name,phone,password,license_no,car_type,audit_status,online_status,city_id) VALUES
-(200001,'d200001','司机A','13900000001','123456','A11111','economy','approved','online',1),
-(200002,'d200002','司机B','13900000002','123456','A22222','premium','approved','offline',1),
-(200003,'d200003','司机C','13900000003','123456','A33333','economy','approved','offline',3),
-(200004,'d200004','司机D','13900000004','123456','A44444','luxury','approved','online',6),
-(200005,'d200005','司机E','13900000005','123456','A55555','premium','rejected','offline',7);
+INSERT INTO driver (id,username,name,phone,password,gender,birthday,license_no,car_type,audit_status,online_status,city_id,create_time,update_time) VALUES
+(200001,'d200001','司机A','13900000001','123456','男','1992-02-11','A11111','economy','approved','online',1,NOW(),NOW()),
+(200002,'d200002','司机B','13900000002','123456','女','1994-04-09','A22222','premium','approved','offline',1,NOW(),NOW()),
+(200003,'d200003','司机C','13900000003','123456','男','1991-08-17','A33333','economy','approved','offline',3,NOW(),NOW()),
+(200004,'d200004','司机D','13900000004','123456','男','1989-10-23','A44444','luxury','approved','online',6,NOW(),NOW()),
+(200005,'d200005','司机E','13900000005','123456','女','1993-05-15','A55555','premium','rejected','offline',7,NOW(),NOW());
 
 /* vehicle */
 INSERT INTO vehicle (plate_no,model,status,driver_id) VALUES
@@ -148,16 +192,16 @@ INSERT INTO orders (passenger_id,driver_id,vehicle_id,city_id,start_addr,end_add
 (100005,NULL,NULL,9,'春熙路','天府广场','luxury',5.60,16,45.20,1,45.20,NOW());
 
 /* city */
-INSERT INTO city (name,open_status,operate_status) VALUES
-('深圳','open','running'),
-('广州','open','running'),
-('北京','open','running'),
-('上海','open','paused'),
-('杭州','close','paused'),
-('西安','open','running'),
-('大连','open','running'),
-('沈阳','open','running'),
-('成都','open','running');
+INSERT INTO city (name,open_status,operate_status,create_time,update_time) VALUES
+('深圳','open','running',NOW(),NOW()),
+('广州','open','running',NOW(),NOW()),
+('北京','open','running',NOW(),NOW()),
+('上海','open','paused',NOW(),NOW()),
+('杭州','close','paused',NOW(),NOW()),
+('西安','open','running',NOW(),NOW()),
+('大连','open','running',NOW(),NOW()),
+('沈阳','open','running',NOW(),NOW()),
+('成都','open','running',NOW(),NOW());
 
 /* feedback */
 INSERT INTO feedback (user_type,user_id,type,content,status,create_time) VALUES

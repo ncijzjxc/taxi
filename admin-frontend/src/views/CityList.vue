@@ -10,6 +10,8 @@
  <el-table-column prop="name" label="城市"/>
  <el-table-column prop="openStatus" label="是否开通"/>
  <el-table-column prop="operateStatus" label="运营状态"/>
+ <el-table-column prop="createTime" label="创建时间"/>
+ <el-table-column prop="updateTime" label="更新时间"/>
  <el-table-column label="操作" width="240">
  <template #default="scope">
  <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
@@ -95,6 +97,7 @@
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import api from '../api'
 const list = ref([])
 const total = ref(0)
@@ -132,7 +135,24 @@ const save = async ()=>{
  load()
 }
 
-const remove = async (id)=>{ await api.delete(`/cities/${id}`); load() }
+const remove = async (id) => {
+  try {
+    await ElMessageBox.confirm('确定要删除该城市吗？删除后不可恢复。', '删除确认', {
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+  } catch {
+    return
+  }
+  try {
+    await api.delete(`/cities/${id}`)
+    ElMessage.success('已删除')
+    load()
+  } catch (e) {
+    ElMessage.error(e?.message || '删除失败')
+  }
+}
 
 const openPrice = (row)=>{
  currentCity.value = row
@@ -161,7 +181,24 @@ const savePrice = async ()=>{
  loadPrice()
 }
 
-const removePrice = async (id)=>{ await api.delete(`/price-rules/${id}`); loadPrice() }
+const removePrice = async (id) => {
+  try {
+    await ElMessageBox.confirm('确定要删除该计价规则吗？删除后不可恢复。', '删除确认', {
+      confirmButtonText: '确定删除',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+  } catch {
+    return
+  }
+  try {
+    await api.delete(`/price-rules/${id}`)
+    ElMessage.success('已删除')
+    loadPrice()
+  } catch (e) {
+    ElMessage.error(e?.message || '删除失败')
+  }
+}
 
 onMounted(load)
 </script>
